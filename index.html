@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Signal &mdash; Social Media &amp; Student Mental Health</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,500&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <div class="grain"></div>
+
+  <header class="topbar">
+    <div class="wordmark">
+      <span class="wordmark-dot"></span>
+      Signal
+    </div>
+    <p class="topbar-note">a quiet read on your screen time</p>
+  </header>
+
+  <main>
+    <section class="hero">
+      <p class="eyebrow">Student wellbeing model &middot; random forest, trained on 5,000 students</p>
+      <h1>
+        Your phone keeps<br>
+        a diary.<br>
+        <em>This reads it back to you.</em>
+      </h1>
+      <p class="hero-sub">
+        Fill in a day in your life &mdash; scrolling, sleeping, studying, moving &mdash;
+        and the model estimates where your mental health score is likely sitting.
+        Not a diagnosis. A mirror.
+      </p>
+    </section>
+
+    <section class="console">
+
+      <form class="card form-card" id="predict-form" novalidate>
+        <div class="card-head">
+          <h2>Today's inputs</h2>
+          <span class="card-head-tag">01</span>
+        </div>
+
+        <div class="field-grid">
+
+          <label class="field">
+            <span class="field-label">Age</span>
+            <input type="number" name="Age" min="10" max="100" value="21" required>
+          </label>
+
+          <label class="field">
+            <span class="field-label">Gender</span>
+            <select name="Gender" required>
+              <option value="Female">Female</option>
+              <option value="Male">Male</option>
+            </select>
+          </label>
+
+          <label class="field">
+            <span class="field-label">Country</span>
+            <select name="Country" id="country-select" required></select>
+          </label>
+
+          <label class="field">
+            <span class="field-label">Academic level</span>
+            <select name="Academic_Level" required>
+              <option value="High School">High School</option>
+              <option value="Undergraduate" selected>Undergraduate</option>
+              <option value="Graduate">Graduate</option>
+            </select>
+          </label>
+
+          <label class="field">
+            <span class="field-label">Main platform</span>
+            <select name="Most_Used_Platform" required>
+              <option>Facebook</option>
+              <option>Instagram</option>
+              <option>TikTok</option>
+              <option>YouTube</option>
+              <option>Snapchat</option>
+              <option>Twitter</option>
+              <option>WhatsApp</option>
+              <option>LinkedIn</option>
+              <option>WeChat</option>
+              <option>KakaoTalk</option>
+              <option>LINE</option>
+              <option>VKontakte</option>
+            </select>
+          </label>
+
+          <label class="field">
+            <span class="field-label">Main purpose</span>
+            <select name="Purpose_Of_Use" required>
+              <option>Entertainment</option>
+              <option>Networking</option>
+              <option>Education</option>
+              <option>News</option>
+            </select>
+          </label>
+
+          <label class="field slider-field">
+            <span class="field-label">Daily screen time <b id="usage-out">4.0</b> hrs</span>
+            <input type="range" name="Avg_Daily_Usage_Hours" min="0" max="14" step="0.1" value="4.0">
+          </label>
+
+          <label class="field slider-field">
+            <span class="field-label">Phone unlocks / day <b id="unlocks-out">130</b></span>
+            <input type="range" name="Daily_Unlocks" min="0" max="300" step="1" value="130">
+          </label>
+
+          <label class="field slider-field">
+            <span class="field-label">Study hours <b id="study-out">4.5</b></span>
+            <input type="range" name="Study_Hours" min="0" max="12" step="0.1" value="4.5">
+          </label>
+
+          <label class="field slider-field">
+            <span class="field-label">Physical activity <b id="activity-out">2.0</b> hrs</span>
+            <input type="range" name="Physical_Activity_Hours" min="0" max="8" step="0.1" value="2.0">
+          </label>
+
+          <label class="field slider-field">
+            <span class="field-label">Sleep <b id="sleep-out">6.7</b> hrs</span>
+            <input type="range" name="Sleep_Hours_Per_Night" min="0" max="12" step="0.1" value="6.7">
+          </label>
+
+          <label class="field">
+            <span class="field-label">Self-rated stress</span>
+            <select name="Stress_Level" required>
+              <option value="Low">Low</option>
+              <option value="Medium" selected>Medium</option>
+              <option value="High">High</option>
+              <option value="Very High">Very High</option>
+            </select>
+          </label>
+
+        </div>
+
+        <div class="form-foot">
+          <p class="api-hint">calling <code id="api-url-echo"></code></p>
+          <button type="submit" id="submit-btn">
+            <span class="btn-label">Read my signal</span>
+          </button>
+        </div>
+      </form>
+
+      <div class="card result-card" id="result-card">
+        <div class="card-head">
+          <h2>Reading</h2>
+          <span class="card-head-tag">02</span>
+        </div>
+
+        <div class="gauge-wrap">
+          <svg viewBox="0 0 240 150" class="gauge" id="gauge-svg">
+            <path class="gauge-track" d="M 20 130 A 100 100 0 0 1 220 130" />
+            <path class="gauge-fill" id="gauge-fill" d="M 20 130 A 100 100 0 0 1 220 130" />
+            <circle id="gauge-needle-base" cx="120" cy="130" r="5"></circle>
+          </svg>
+          <div class="gauge-readout">
+            <span class="gauge-score" id="gauge-score">&mdash;</span>
+            <span class="gauge-max">/10</span>
+          </div>
+          <p class="gauge-category" id="gauge-category">awaiting input</p>
+        </div>
+
+        <p class="gauge-copy" id="gauge-copy">
+          Set the sliders on the left to reflect a typical day, then request a reading.
+          The gauge breathes gently until it has something to say.
+        </p>
+
+        <p class="error-msg" id="error-msg"></p>
+      </div>
+
+    </section>
+
+    <footer class="foot">
+      <p>Model: RandomForestRegressor &middot; r&sup2; &asymp; 0.88 on held-out students &middot; predictions are illustrative, not clinical guidance.</p>
+    </footer>
+  </main>
+
+<script src="script.js"></script>
+</body>
+</html>
