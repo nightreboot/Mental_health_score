@@ -1,5 +1,5 @@
 // ============ config ============
-const API_URL = "http://127.0.0.1:2400";
+const API_URL = "https://mental-health-score-kyhb.onrender.com/predict";
 document.getElementById("api-url-echo").textContent = API_URL;
 
 // ============ countries ============
